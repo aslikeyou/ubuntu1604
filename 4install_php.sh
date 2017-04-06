@@ -1,2 +1,2 @@
 
-sudo apt-get install php-fpm php-mysql
+sudo apt-get install -y php-fpm php-mysql
