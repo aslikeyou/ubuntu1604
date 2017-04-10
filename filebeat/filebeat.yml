@@ -1,0 +1,149 @@
+filebeat.prospectors:
+
+#------------------------------- nginx error logs ------------------------
+
+- input_type: log
+
+  paths:
+    - /var/log/nginx/error*.log
+
+  document_type: nginx-error
+
+#------------------------------- nginx access logs ------------------------
+
+- input_type: log
+
+  paths:
+    - /var/log/nginx/*.fb.json
+
+  document_type: nginx-access
+
+  json:
+    -json.keys_under_root: true
+    -json.add_error_key: true
+    -json.message_key: nginx-access
+
+  #exclude_lines: ["^DBG"]
+  #include_lines: ["^ERR", "^WARN"]
+  exclude_files: [".gz$"]
+
+
+#------------------------------- pdffiller json logs ------------------------
+- input_type: log
+
+  paths:
+    - /var/www/pdffiller/logs/json-fb/*
+
+  document_type: php-fb
+
+  json:
+    -json.keys_under_root: true
+    -json.add_error_key: true
+    -json.message_key: message
+
+  #exclude_lines: ["^DBG"]
+  #include_lines: ["^ERR", "^WARN"]
+  exclude_files: [".gz$"]
+
+#  fields:
+#    level: debug
+
+#-------------------- mail logs ------------------
+
+- input_type: log
+
+  paths:
+    - /var/log/mail.log
+
+  document_type: smtp
+
+
+- input_type: log
+
+  paths:
+    - /var/log/mail.err
+
+  document_type: smtp-error
+
+#-------------------- mail logs ------------------
+
+#--------------------- JAVA PDF WORKERS ----------
+- input_type: log
+
+  paths:
+    - /mnt/nodepdf/logs/worker.log
+
+  document_type: pdf-worker
+
+  json:
+    -json.keys_under_root: true
+    -json.add_error_key: true
+    -json.message_key: message
+
+#--------------------- JAVA PDF WORKERS ----------
+
+#===========================registry_file===================================
+#filebeat.registry_file: /var/lib/filebeat/registry
+#================================ General =====================================
+
+# The name of the shipper that publishes the network data. It can be used to group
+# all the transactions sent by a single shipper in the web interface.
+name: "web"
+
+# The tags of the shipper are included in their own field with each
+# transaction published.
+#tags: ["denise", "json"]
+
+# Optional fields that you can specify to add additional information to the
+# output.
+fields:
+  env: prod
+
+#================================ Outputs =====================================
+#----------------------------- Logstash output --------------------------------
+
+#output.logstash:
+#  enabled: true
+#  hosts: ["localhost"]
+#  bulk_max_size: 1024
+#
+#  # Optional SSL. By default is off.
+#  # List of root certificates for HTTPS server verifications
+#  ssl.enabled: true
+#  ssl.certificate_authorities: ["logstash-forwarder.crt"]
+
+#output.redis:
+#  hosts: ["localhost"]
+#  password: ""
+#  key: "filebeat"
+#  db: 100
+#  timeout: 5
+
+#-------------------------- Elasticsearch output -------------------------------
+output.elasticsearch:
+  enabled: true
+
+  hosts: ["localhost"]
+
+  #compression_level: 6
+
+  # Template name. By default the template name is filebeat.
+  #template.name: "filebeat"
+
+  # Path to template file
+  template.path: "${path.config}/filebeat.template.json"
+
+  # Overwrite existing template
+  template.overwrite: false
+
+  # If set to true, filebeat checks the Elasticsearch version at connect time, and if it
+  # is 2.x, it loads the file specified by the template.versions.2x.path setting. The
+  # default is true.
+  template.versions.2x.enabled: false
+
+  # Path to the Elasticsearch 2.x version of the template file.
+  template.versions.2x.path: "${path.config}/filebeat.template-es2x.json"
+
+#================================ Logging =====================================
+#logging.level: debug
+#logging.selectors: ["*"]
