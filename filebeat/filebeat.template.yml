@@ -32,7 +32,7 @@ filebeat.prospectors:
 - input_type: log
 
   paths:
-    - /var/www/pdffiller/logs/json-fb/*
+    - {LOGS_DIRECTORY}/*
 
   document_type: php-fb
 
@@ -88,7 +88,7 @@ filebeat.prospectors:
 
 # The name of the shipper that publishes the network data. It can be used to group
 # all the transactions sent by a single shipper in the web interface.
-name: "web"
+name: "{BEAT_NAME}"
 
 # The tags of the shipper are included in their own field with each
 # transaction published.
@@ -97,7 +97,7 @@ name: "web"
 # Optional fields that you can specify to add additional information to the
 # output.
 fields:
-  env: prod
+  env: {APP_ENV}
 
 #================================ Outputs =====================================
 #----------------------------- Logstash output --------------------------------
@@ -123,7 +123,7 @@ fields:
 output.elasticsearch:
   enabled: true
 
-  hosts: ["localhost"]
+  hosts: [{ES_HOSTS}]
 
   #compression_level: 6
 
