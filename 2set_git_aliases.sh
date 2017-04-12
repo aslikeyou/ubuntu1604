@@ -8,4 +8,4 @@ git config --global alias.hist "log --pretty=format:'%h %ad | %s%d [%an]' --grap
 git config --global alias.type 'cat-file -t'
 git config --global alias.dump 'cat-file -p'
 
-ssh-keygen -t rsa -b 4096 -C "alex@pdffiller.com"
+ssh-keygen -t rsa -b 4096 -C "alex@pdffiller.com" -f $HOME/.ssh/id_rsa -N ''
